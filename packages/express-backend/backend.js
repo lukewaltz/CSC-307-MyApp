@@ -48,7 +48,7 @@ app.get('/users', (req, res) => {
     res.send(users);
 })
 
- /* helper function and route by user name */
+ /* helper function and route for get user name */
 
  const findUserByName = (name) => { 
     return users['users_list']
@@ -67,7 +67,7 @@ app.get('/users', (req, res) => {
     }
 });
 
-/* helper function and  route by user id */
+/* helper function and route for get user id */
 
 const findUserById = (id) => 
     users['users_list']
@@ -81,6 +81,18 @@ app.get('/users/:id', (req, res) => {
     } else {
         res.send(result);
     }
+});
+
+/* helper function and route for post user */
+const addUser = (user) => {
+    users['users_list'].push(user);
+    return user;
+}
+
+app.post('/users', (req, res) => {
+    const userToAdd = req.body;
+    addUser(userToAdd);
+    res.send();
 });
 
 app.listen(port, () => {
