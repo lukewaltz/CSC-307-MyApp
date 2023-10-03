@@ -95,6 +95,27 @@ app.post('/users', (req, res) => {
     res.send();
 });
 
+/* hard delete operation */
+const deleteUser = (userId) => {
+    const index = users['users_list'].findIndex(u => u.id === userId);
+    if (index !== -1){
+        users['users_list'].splice(index, 1);
+        return true;
+    }
+    return false;
+}
+
+app.delete('/user/:userId', (req, res) => {
+    const userId = parseInt(req.params.userId);
+    const result = deleteUser(userId);
+
+    if (result) {
+        res.status(200).json({status: "success", message: "User deleted successfully"});
+    } else {
+        res.status(404).json({status: "error", message: "User not found"});
+    }
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
