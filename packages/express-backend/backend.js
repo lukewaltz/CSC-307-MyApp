@@ -99,15 +99,16 @@ app.post('/users', (req, res) => {
 const deleteUser = (userId) => {
     const index = users['users_list'].findIndex(u => u.id === userId);
     if (index !== -1){
+        console.log("in deleteUser");
         users['users_list'].splice(index, 1);
         return true;
     }
     return false;
 }
 
-app.delete('/user/:userId', (req, res) => {
-    const userId = parseInt(req.params.userId);
-    const result = deleteUser(userId);
+app.delete('/users/:id', (req, res) => {
+    const userId = req.params['id'];
+    let result = deleteUser(userId);
 
     if (result) {
         res.status(200).json({status: "success", message: "User deleted successfully"});
