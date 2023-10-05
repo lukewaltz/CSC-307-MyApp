@@ -55,9 +55,20 @@ app.get('/users', (req, res) => {
         .filter( (user) => user['name'] === name); 
 }
 
+/* get ALL by name and job operation */
+const findUserByNameAndJob = (name, job) => {
+    return users['users_list']
+        .filter( (user) => user['name'] === name && user['job'] === job);
+}
+
+/* extended in step 7 from step 4 */
 app.get('/users', (req, res) => {
     const name = req.query.name;
-    if (name != undefined){
+    const job = req.query.job;
+    if (name && job ){
+        let result = findUserByNameAndJob(name, job);
+        res.send(result);
+    }else if (name) {
         let result = findUserByName(name);
         result = {users_list: result};
         res.send(result);
@@ -99,7 +110,6 @@ app.post('/users', (req, res) => {
 const deleteUser = (userId) => {
     const index = users['users_list'].findIndex(u => u.id === userId);
     if (index !== -1){
-        console.log("in deleteUser");
         users['users_list'].splice(index, 1);
         return true;
     }
