@@ -35,7 +35,6 @@ const users = {
     ]
  }
 
-
 app.use(cors());
 app.use(express.json());
 
@@ -90,15 +89,19 @@ app.get('/users/:id', (req, res) => {
     }
 });
 
+
 /* helper function and route for post user */
 const addUser = (user) => {
+    user.id = String(10000 * Math.random());
     users['users_list'].push(user);
     return user;
 }
 
+
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
+    res.status(201)
     res.send();
 });
 
