@@ -40,17 +40,11 @@ app.use(cors());
 app.use(express.json());
 
 /* routes */
-
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.get('/users', (req, res) => {
-    res.send(users);
-})
-
  /* helper function and route for get user name */
-
  const findUserByName = (name) => { 
     return users['users_list']
         .filter( (user) => user['name'] === name); 
@@ -62,14 +56,15 @@ const findUserByNameAndJob = (name, job) => {
         .filter( (user) => user['name'] === name && user['job'] === job);
 }
 
+
 /* extended in step 7 from step 4 */
 app.get('/users', (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
-    if (name && job ){
+    if (name != undefined && job != undefined){
         let result = findUserByNameAndJob(name, job);
         res.send(result);
-    }else if (name) {
+    }else if (name != undefined) {
         let result = findUserByName(name);
         result = {users_list: result};
         res.send(result);
@@ -79,8 +74,8 @@ app.get('/users', (req, res) => {
     }
 });
 
-/* helper function and route for get user id */
 
+/* helper function and route for get user id */
 const findUserById = (id) => 
     users['users_list']
         .find( (user) => user['id'] === id);
