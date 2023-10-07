@@ -7,11 +7,28 @@ function MyApp() {
     const [characters, setCharacters] = useState([]);
 
     function removeOneCharacter (index) {
-	    const updated = characters.filter((character, i) => {
-	        return i !== index
+        const userID = characters[index]["id"];
+        deleteUser(userID)
+        .then(res => {
+            if (res.status === 200) {
+                const updated = characters.filter((character, i) => {
+	            return i !== index
+            });
+            setCharacters(updated);
+        }
 	    });
-	  setCharacters(updated);
 	}
+
+    function deleteUser(id) {
+        const removeURI = `${"http://localhost:8000/users/"}${id}`;
+        const promise = fetch(removeURI, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return promise;
+    }
 
     function fetchUsers() {
         const promise = fetch("http://localhost:8000/users");
@@ -41,8 +58,7 @@ function MyApp() {
             .then(() => setCharacters([...characters, person]))
             .catch((error) => {
                 console.log(error);
-            })
-        
+            }) 
     }
 
     return (

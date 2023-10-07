@@ -62,6 +62,7 @@ app.get('/users', (req, res) => {
     const job = req.query.job;
     if (name != undefined && job != undefined){
         let result = findUserByNameAndJob(name, job);
+        result = {users_list: result};
         res.send(result);
     }else if (name != undefined) {
         let result = findUserByName(name);
@@ -100,9 +101,10 @@ const addUser = (user) => {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(201)
-    res.send();
+    let user = addUser(userToAdd);
+    result = {users_list: user};
+    res.status(201);
+    res.send(user);
 });
 
 /* hard delete operation */
