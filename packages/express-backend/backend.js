@@ -93,7 +93,7 @@ app.get('/users/:id', (req, res) => {
 
 /* helper function and route for post user */
 const addUser = (user) => {
-    user.id = String(10000 * Math.random());
+    user.id = String(Math.floor(Math.random() * 999999));
     users['users_list'].push(user);
     return user;
 }
@@ -102,7 +102,6 @@ const addUser = (user) => {
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     let user = addUser(userToAdd);
-    result = {users_list: user};
     res.status(201);
     res.send(user);
 });

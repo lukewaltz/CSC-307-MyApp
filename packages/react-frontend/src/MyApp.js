@@ -42,7 +42,12 @@ function MyApp() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(person),
-        });
+        })
+        //console.log("in postUser")
+            .then((res) => (res.status === 201 ? res.json() : undefined))
+            .then((json) => {
+                 setCharacters([...characters, json]);
+            });
         return promise;
     }
 
@@ -55,10 +60,11 @@ function MyApp() {
 
     function updateList(person){
         postUser(person)
-            .then(() => setCharacters([...characters, person]))
+            //.then(() => setCharacters([...characters, person]))
             .catch((error) => {
                 console.log(error);
             }) 
+            console.log("update list called post user, then setCharacters");
     }
 
     return (
