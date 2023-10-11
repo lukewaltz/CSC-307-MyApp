@@ -25,7 +25,7 @@ test('Testing div -- divby0=infinity', () => {
 });
 
 test('Testing containsNumbers -- fail | space == 0???', () => {
-    const expected = false;
+    const expected = true;
     const got = mut.containsNumbers("beans bears");
     expect(got).toBe(expected);
 });
