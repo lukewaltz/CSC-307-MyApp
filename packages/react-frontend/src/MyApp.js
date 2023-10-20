@@ -32,7 +32,7 @@ function MyApp() {
 
     function fetchUsers() {
         const promise = fetch("http://localhost:8000/users");
-        return promise;
+         return promise;
     } 
 
     function postUser(person){
@@ -46,7 +46,11 @@ function MyApp() {
         //console.log("in postUser")
             .then((res) => (res.status === 201 ? res.json() : undefined))
             .then((json) => {
-                 setCharacters([...characters, json]);
+                if (json) {
+                    console.log(json);
+                    setCharacters([...characters, json]);
+                    console.log(characters);
+                }
             });
         return promise;
     }
@@ -59,11 +63,9 @@ function MyApp() {
     }, [] );
 
     function updateList(person){
-        postUser(person)
-            //.then(() => setCharacters([...characters, person]))
-            .catch((error) => {
+        postUser(person).catch((error) => {
                 console.log(error);
-            }) 
+            }); 
             console.log("update list called post user, then setCharacters");
     }
 

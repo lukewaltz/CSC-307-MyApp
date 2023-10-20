@@ -1,39 +1,10 @@
 // backend.js
 import express from "express";
 import cors from "cors";
+import userServices from "./models/user-services.js";
 
 const app = express();
 const port = 8000;
-
-const users = { 
-    users_list : [
-       { 
-          id : 'xyz789',
-          name : 'Charlie',
-          job: 'Janitor',
-       },
-       {
-          id : 'abc123', 
-          name: 'Mac',
-          job: 'Bouncer',
-       },
-       {
-          id : 'ppp222', 
-          name: 'Mac',
-          job: 'Professor',
-       }, 
-       {
-          id: 'yat999', 
-          name: 'Dee',
-          job: 'Aspring actress',
-       },
-       {
-          id: 'zap555', 
-          name: 'Dennis',
-          job: 'Bartender',
-       }
-    ]
- }
 
 app.use(cors());
 app.use(express.json());
@@ -43,88 +14,73 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
- /* helper function and route for get user name */
- const findUserByName = (name) => { 
-    return users['users_list']
-        .filter( (user) => user['name'] === name); 
-}
-
-/* get ALL by name and job operation */
-const findUserByNameAndJob = (name, job) => {
-    return users['users_list']
-        .filter( (user) => user['name'] === name && user['job'] === job);
-}
-
-
-/* extended in step 7 from step 4 */
+/* VALID */
 app.get('/users', (req, res) => {
+    //console.log("IN GET");
     const name = req.query.name;
     const job = req.query.job;
-    if (name != undefined && job != undefined){
-        let result = findUserByNameAndJob(name, job);
-        result = {users_list: result};
-        res.send(result);
-    }else if (name != undefined) {
-        let result = findUserByName(name);
-        result = {users_list: result};
-        res.send(result);
-    }
-    else{
-        res.send(users);
-    }
+    let result = userServices
+        .getUsers(name, job)
+        .then((result) => res.send(result))
+        .catch((error) => {
+            console.error("ERROR FETCHING USERS:", error);
+            res.status(500).send("Error caught in get/users");
+        }
+    );
 });
 
-
-/* helper function and route for get user id */
-const findUserById = (id) => 
-    users['users_list']
-        .find( (user) => user['id'] === id);
-
+/* VALID */
 app.get('/users/:id', (req, res) => {
     const id = req.params['id']; //or req.params.id
-    let result = findUserById(id);
-    if (result === undefined) {
-        res.status(404).send('Resource not found.');
-    } else {
-        res.send(result);
-    }
+    //let result = findUserById(id);
+    let result = userServices
+        .findUserById(id)
+        .then((result) => result === undefined
+          ? res.status(404).send("Resource not found")
+          : res.send(result)
+        )
+        .catch((error) => {
+        console.error("ERROR FETCHING USERS:", error);
+        res.status(500).send("Error caught in get/users");
+        }
+    );
 });
 
 
-/* helper function and route for post user */
-const addUser = (user) => {
-    user.id = String(Math.floor(Math.random() * 999999));
-    users['users_list'].push(user);
-    return user;
-}
-
-
+/* NOT VALID */
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    let user = addUser(userToAdd);
-    res.status(201);
-    res.send(user);
+    //console.log(userToAdd);
+    //let user = addUser(userToAdd);
+    if (userToAdd === undefined){
+        res.status(404).send("UserToAdd not found");
+    } else {
+        //console.log(userToAdd);
+        userServices
+        .addUser(userToAdd)
+        .then(res.status(201)
+        .send(userToAdd)
+        .catch((error) => console.error("error caught in post.catch", error)));
+    }
+    
 });
 
-/* hard delete operation */
-const deleteUser = (userId) => {
-    const index = users['users_list'].findIndex(u => u.id === userId);
-    if (index !== -1){
-        users['users_list'].splice(index, 1);
-        return true;
-    }
-    return false;
-}
 
 app.delete('/users/:id', (req, res) => {
     const userId = req.params['id'];
-    let result = deleteUser(userId);
-
-    if (result) {
-        res.status(200).json({status: "success", message: "User deleted successfully"});
-    } else {
-        res.status(404).json({status: "error", message: "User not found"});
-    }
+    //let result = deleteUser(userId);
+    let result = userServices
+        .deleteUser(userId)
+        .then((result) =>
+        result === undefined
+          ? res.status(404).send("Resource not found")
+          : res.status(204).send()
+        )
+        .catch((error) => {
+            console.error("Error deleting user:", error);
+            res.status(500).send("Error caught in delete/users/:id");
+        }
+    );
 });
 
 app.listen(port, () => {
