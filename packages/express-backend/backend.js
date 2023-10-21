@@ -47,10 +47,10 @@ app.get('/users/:id', (req, res) => {
 });
 
 
-/* NOT VALID */
+/* VALID */
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    //console.log(userToAdd);
+    console.log(userToAdd);
     //let user = addUser(userToAdd);
     if (userToAdd === undefined){
         res.status(404).send("UserToAdd not found");
@@ -65,7 +65,7 @@ app.post('/users', (req, res) => {
     
 });
 
-
+/* VALID */
 app.delete('/users/:id', (req, res) => {
     const userId = req.params['id'];
     //let result = deleteUser(userId);
